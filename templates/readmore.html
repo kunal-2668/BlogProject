@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+<title>{% block title %} {{data.blog_title}} {% endblock %}</title>
+
+{% block content %} 
+
+<style>
+    .imagebg{
+        background-image: url('{{data.image.url}}');
+        width: 100%;
+        height: 60vh;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .usericon{
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 100%;
+    }
+    a{
+        text-decoration: none;
+    }
+    .description{
+        text-align: justify;
+    }
+    
+</style>
+
+<div class="container-fluid imagebg">
+    <div class="inner p-5 text-light">
+        <h1 class="text-light">{{data.blog_title}}</h1>
+        <h4>Tags - {% for i in data.tags.all %} #{{i}}  {% endfor %}</h4>
+    </div>
+</div>
+
+<div class="container my-4" data-aos="zoom-in">
+    <h2>About {{data.blog_title}}</h2>
+    <hr>
+    <div class="row">
+        <div class="col-lg-8">
+            <p class="description">{{data.description|safe}}</p>
+            <p>Creation date - {{data.created_at|date:"d/m/y"}} {{data.created_at|time:"P"}}</p>
+        </div>
+        <div class="col-lg-4">
+            {% if similar_posts %}
+            <h3>Similar Tags Blogs</h3>
+            <hr>
+            <div class="row">
+                {% for i in similar_posts %}
+                
+                {% if data.blog_title == i.blog_title %}
+                    {% else %}
+                    <div class="col-lg-12">
+                        <img src="{{i.image.url}}" style="width: 100%; height: 300px; object-fit: cover;" alt="">
+                        <h4>{{i.blog_title}} </h4>
+                        <a class="btn btn-outline-primary" href="{% url 'readmore' i.blog_slug %}">Read More</a>
+                        <hr>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+            {% else %}
+
+            <h3>No similar tag blogs</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="container" id="Comments">
+    <h3>Comments- </h3>
+    <hr>
+    <div class="commentform ">
+        <form action="{% url 'addcomment' %}" method="post">
+            {% csrf_token %}
+            <span class="d-flex justify-content-center"> <input type="text" name="comment" placeholder="Add Comments" class="form-control w-25" id=""> <input type="text" name="slug" value="{{data.blog_slug}}" id="" hidden> &nbsp; &nbsp;<button class="btn btn-success" type="submit">Add Comment</button></span>
+        </form>
+    </div>
+    {% for comment in data.blog_comments.all %}
+        <div class="innerdivcomment">
+            <div class="row">
+                <div class="col-lg-12">
+                    <p class="fs-4"><img src="{% static 'images/usericon.jpg' %}" class="usericon" alt=""> {{comment.user}} - <span class="text-end">{{comment.Comment}}</span> &nbsp; <a href="{% url 'commentlike' data.blog_slug comment.id %}"> {% if user in comment.comment_likes.all %} <i class="fa-solid fa-heart" style="color: #ff0000;"></i> {% else %} <i class="fa-regular fa-heart" style="color: #ff0000;"></i> {% endif %} </a>{{comment.number_of_comment_likes}} {% if user == comment.user %} &nbsp;&nbsp;  <a href="{% url 'deletecomment' data.blog_slug comment.id %}"><i class="fa-solid fa-trash" style="color: #d26a6a;"></i></a>  {% endif %}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %} 

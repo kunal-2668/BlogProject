@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+<title>{% block title %}Signup{% endblock %}</title>
+
+{% block content %} 
+
+<div class="container" >
+    <div class="row">
+        <div class="col-lg-6 mx-auto mt-5" >
+            <div class="innerdiv border p-5">
+                <h1>Create Account</h1>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="Enter Username" class="form-control" required>
+                    <label for="">Email</label>
+                    <input type="text" name="email" id="" placeholder="Enter Email" class="form-control" required>
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" placeholder="Create your password" class="form-control" required>
+                    <label for="">Confirm Password</label>
+                    <input type="password" name="password1" id="" placeholder="Confirm password" class="form-control" required>
+                    <br>
+                    <button class="btn btn-success" type="submit">Signup</button> or <a href="{% url 'login' %}">Login</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+<title>{% block title %} Search {% endblock %}</title>
+
+{% block content %} 
+
+<div class="container-fluid">
+    <div class="row">
+        {% for i in data %}
+        <div class="col-lg-4 p-3">
+            <img src="{{i.image.url}}" style="width: 100%; height: 350px; object-fit: cover;" alt="">
+            <h3>{{i.blog_title}}</h3>
+            <a class="btn btn-primary" href="{% url 'readmore' i.blog_slug %}">Read More</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %} 
