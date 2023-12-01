@@ -4,7 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render,redirect,HttpResponse, get_object_or_404
+from django.shortcuts import render,redirect, get_object_or_404
+from django.core.mail import send_mail
+from django.utils.safestring import SafeString
 # Create your views here.
 
 def home(request):
@@ -133,3 +135,27 @@ def Search(request):
         data  = tag.blog_tags.all()
 
         return render(request,'search.html',{'data':data})
+    
+def shareblog(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        body = request.POST['pagelink']
+        slug = request.POST['slug']
+
+        data = Blog.objects.get(blog_slug = slug)
+
+        send_mail(
+            "Chekout Blogs on ProBlogs",
+            f"""Hey Check Out this Blog -- {body} -- copy paste this link in browser
+
+               Blog title - {data.blog_title}
+                Description - Continue Reading in above link
+            """,
+            "kunal00.kr@gmail.com",
+            [f"{email}"],
+            fail_silently=False,
+        )
+        url = f"{slug}"
+        return redirect(f'/readmore/{url}')
+    
+    return redirect('home')
