@@ -154,7 +154,6 @@ def searchdata(request,tag):
     if request.method == 'GET':
         tag = Tags.objects.filter(tagname = tag).first()
         data = tag.blog_tags.all
-        print(data)
         tags = Tags.objects.all()
         return render(request,'search.html',{'data':data,'tags':tags})
     else:
