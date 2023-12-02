@@ -3,15 +3,44 @@
 
 {% block content %} 
 
-<div class="container-fluid">
-    <div class="row">
-        {% for i in data %}
-        <div class="col-lg-4 p-3">
-            <img src="{{i.image.url}}" style="width: 100%; height: 350px; object-fit: cover;" alt="">
-            <h3>{{i.blog_title}}</h3>
-            <a class="btn btn-primary" href="{% url 'readmore' i.blog_slug %}">Read More</a>
+<div class="container mt-5">
+    <form action="{% url 'searchdata' 'sss' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="searchdata" id="" placeholder="Search Blog by title" class="form-control mt-5" required>
+        <br>
+        <div class="text-center">
+            <button class="btn btn-success" type="submit">Search</button>
         </div>
-        {% endfor %}
+    </form>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-2">
+            <h1>Tags</h1>
+        <ul class="border">
+            {% for i in tags %}
+            <li><a href="{% url 'searchdata' i.tagname %}">{{i.tagname}}</a></li>    
+            {% endfor %}
+        </ul>
+    </div>
+        <div class="col-lg-10">
+            <div class="row">
+                {% if data %}
+                {% for i in data %}
+                    <div class="col-lg-4 p-3">
+                        <img src="{{i.image.url}}" style="width: 100%; height: 350px; object-fit: cover;" alt="">
+                        <h3>{{i.blog_title}}</h3>
+                        <a class="btn btn-primary" href="{% url 'readmore' i.blog_slug %}">Read More</a>
+                    </div>             
+                {% endfor %}
+                {% else %}
+                <h2>
+                    No Blogs
+                </h2>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 

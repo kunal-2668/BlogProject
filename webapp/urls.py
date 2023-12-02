@@ -13,6 +13,7 @@ urlpatterns = [
     path('deleteComment/<str:slug>/<int:id>',deleteComment,name='deletecomment'),
     path('addcomment',addComment,name='addcomment'),
     path('search',Search,name='search'),
+    path('searchdata/<str:tag>',searchdata,name='searchdata'),
     path('share',shareblog,name='share'),
     path('addlike/<str:slug>',add_remove_blog_like,name='addlike'),
 

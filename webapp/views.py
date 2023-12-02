@@ -6,9 +6,10 @@ from .models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render,redirect, get_object_or_404
 from django.core.mail import send_mail
-from django.utils.safestring import SafeString
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url='login')
 def home(request):
     data_list = Blog.objects.all()
 
@@ -26,6 +27,7 @@ def home(request):
     return render(request,'index.html',{'data':data})
 
 
+@login_required(login_url='login')
 def readMore(request,slug):
     data = Blog.objects.filter(blog_slug=slug).first()
     similartags = data.tags.all()
@@ -42,6 +44,7 @@ def readMore(request,slug):
     return render (request,'readmore.html',{'data':data,'similar_posts':datalist})
 
 
+@login_required(login_url='login')
 def add_remove_blog_like(request,slug):
     post = get_object_or_404(Blog,blog_slug = slug)
  
@@ -54,7 +57,7 @@ def add_remove_blog_like(request,slug):
     return redirect(f'/{url}')
 
 
-
+@login_required(login_url='login')
 def add_remove_comment_like(request,slug,id):
     comment = get_object_or_404(Comments,id = id)
  
@@ -110,6 +113,7 @@ def logoutView(request):
     return redirect('login')
 
 
+@login_required(login_url='login')
 def addComment(request):
     if request.method == 'POST':
         comment = request.POST['comment']
@@ -122,20 +126,46 @@ def addComment(request):
         return redirect('readmore',slug=slug)
 
 
+@login_required(login_url='login')
 def deleteComment(request,slug,id):
     comment = Comments.objects.get(id=id)
     comment.delete()
     return redirect('readmore',slug=slug)
 
 
+@login_required(login_url='login')
 def Search(request):
     if request.method == 'POST':
         search = request.POST['search']
         tag = Tags.objects.filter(tagname__contains=search).first()
-        data  = tag.blog_tags.all()
-
-        return render(request,'search.html',{'data':data})
+        if tag:
+            tags = Tags.objects.all()
+            data  = tag.blog_tags.all()
+            return render(request,'search.html',{'data':data,'tags':tags})
+        else:
+            return redirect('search')
+    else:
+        tags = Tags.objects.all()
+        data = Blog.objects.all().order_by("?")
+        return render (request,'search.html',{'tags':tags,'data':data})
     
+
+def searchdata(request,tag):
+    if request.method == 'GET':
+        tag = Tags.objects.filter(tagname = tag).first()
+        data = tag.blog_tags.all
+        print(data)
+        tags = Tags.objects.all()
+        return render(request,'search.html',{'data':data,'tags':tags})
+    else:
+        search = request.POST['searchdata']
+        tags = Tags.objects.all()
+        data = Blog.objects.filter(blog_title__contains=search)
+        return render(request,'search.html',{'data':data,'tags':tags})
+
+    
+
+@login_required(login_url='login')
 def shareblog(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -159,3 +189,5 @@ def shareblog(request):
         return redirect(f'/readmore/{url}')
     
     return redirect('home')
+
+# def searchPage()
